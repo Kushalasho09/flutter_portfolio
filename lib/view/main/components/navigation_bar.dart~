@@ -16,29 +16,19 @@ class TopNavigationBar extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // 🟢 Menu Button (always visible now)
-          Builder(
-            builder: (context) {
-              return Padding(
-                padding: const EdgeInsets.all(defaultPadding / 2),
-                child: MenuButton(
-                  onTap: () => Scaffold.of(context).openDrawer(),
-                ),
-              );
-            },
+          const Spacer(),
+          Padding(
+            padding: const EdgeInsets.all(defaultPadding / 2),
+            child: !Responsive.isLargeMobile(context)
+                ? Image.asset('assets/images/triange_icon.png', height: 40)
+                : MenuButton(
+              onTap: () => Scaffold.of(context).openDrawer(),
+            ),
           ),
-
           const Spacer(flex: 2),
-
-          // 🟣 Navigation buttons (only on larger screens)
-          if (!Responsive.isLargeMobile(context))
-             NavigationButtonList(),
-
+          if (!Responsive.isLargeMobile(context)) NavigationButtonList(),
           const Spacer(flex: 2),
-
-          // 🔵 Connect button (always visible)
           const ConnectButton(),
-
           const Spacer(),
         ],
       ),

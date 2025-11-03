@@ -1,56 +1,102 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../../res/constants.dart';
 
-class MenuButton extends StatelessWidget {
+class MenuButton extends StatefulWidget {
   final VoidCallback? onTap;
   const MenuButton({super.key, this.onTap});
+
+  @override
+  State<MenuButton> createState() => _MenuButtonState();
+}
+
+class _MenuButtonState extends State<MenuButton> {
+  bool _isHovered = false;
+  bool _isPressed = false;
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         const Spacer(),
-        TweenAnimationBuilder(
-          tween: Tween(begin: 0.0, end: 1.0),
-          duration: const Duration(milliseconds: 200),
-          builder: (context, value, child) {
-            return InkWell(
-              onTap: onTap,
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-                height: defaultPadding * 2.0 * value,
-                width: defaultPadding * 2.0 * value,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.black,
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.pinkAccent.withOpacity(.5),
-                          offset: const Offset(1, 1)),
-                      BoxShadow(
-                          color: Colors.blue.withOpacity(.5),
-                          offset: const Offset(-1, -1)),
-                    ]),
-                child:  Center(
-                  child: ShaderMask(
-                    shaderCallback: (bounds) {
-                      return LinearGradient(
-                              colors: [Colors.pink, Colors.blue.shade900])
-                          .createShader(bounds);
-                    },
-                    child: Icon(
-                      Icons.menu,
-                      color: Colors.white,
-                      size: defaultPadding * 1.2 * value,
+        MouseRegion(
+          onEnter: (_) => setState(() => _isHovered = true),
+          onExit: (_) => setState(() => _isHovered = false),
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+            onTapDown: (_) => setState(() => _isPressed = true),
+            onTapUp: (_) {
+              setState(() => _isPressed = false);
+              widget.onTap?.call();
+            },
+            onTapCancel: () => setState(() => _isPressed = false),
+            child: TweenAnimationBuilder(
+              tween: Tween(begin: 0.0, end: 1.0),
+              duration: const Duration(milliseconds: 350),
+              curve: Curves.easeOutBack,
+              builder: (context, value, child) {
+                final double scale =
+                _isPressed ? 0.92 : (_isHovered ? 1.05 : 1.0);
+
+                return AnimatedScale(
+                  scale: scale,
+                  duration: const Duration(milliseconds: 180),
+                  curve: Curves.easeOutCubic,
+                  child: Container(
+                    height: defaultPadding * 2.2 * value,
+                    width: defaultPadding * 2.2 * value,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.6),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(
+                        color: _isHovered
+                            ? Colors.white.withOpacity(0.25)
+                            : Colors.white.withOpacity(0.15),
+                        width: 1,
+                      ),
+                      boxShadow: [
+                        if (_isHovered)
+                          BoxShadow(
+                            color: Colors.blueAccent.withOpacity(0.3),
+                            blurRadius: 15,
+                            offset: const Offset(0, 6),
+                          ),
+                        if (_isPressed)
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.5),
+                            blurRadius: 6,
+                            offset: const Offset(0, 3),
+                          ),
+                      ],
+                      backgroundBlendMode: BlendMode.overlay,
                     ),
-                  )
-                ),
-              ),
-            );
-          },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(18),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                        child: Center(
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 250),
+                            transform: Matrix4.translationValues(
+                                0, _isPressed ? 2 : 0, 0),
+                            child: Icon(
+                              Icons.menu_rounded,
+                              size: defaultPadding * 1.4 * value,
+                              color: _isHovered
+                                  ? Colors.white
+                                  : Colors.white70.withOpacity(0.9),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
         ),
-        const Spacer(
-          flex: 5,
-        )
+        const Spacer(flex: 5),
       ],
     );
   }

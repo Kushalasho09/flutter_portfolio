@@ -16,7 +16,7 @@ class _ConnectButtonState extends State<ConnectButton> {
   bool _isPressed = false;
 
   Future<void> _launchWhatsApp() async {
-    const url = 'https://wa.me/9978217711';
+    const url = 'https://wa.me/03054200605';
     if (!await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)) {
       throw 'Could not open WhatsApp';
     }

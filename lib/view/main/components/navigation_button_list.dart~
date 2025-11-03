@@ -12,8 +12,8 @@ class NavigationButtonList extends StatelessWidget {
     {'title': 'Home', 'page': 0},
     {'title': 'About Us', 'page': null},
     {'title': 'Projects', 'page': 1},
-    // {'title': 'Certifications', 'page': 2},
-    // {'title': 'Achievements', 'page': null},
+    {'title': 'Certifications', 'page': 2},
+    {'title': 'Achievements', 'page': null},
   ];
 
   @override
